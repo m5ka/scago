@@ -16,7 +16,7 @@ type Condition struct {
 // written in the scago sound change notation.
 // Returns nil if there is no condition, or an error if the
 // condition could not be parsed.
-func ParseCondition(input string) (*Condition, error) {
+func (s *ScagoInstance) ParseCondition(input string) (*Condition, error) {
 	input = strings.TrimSpace(input)
 	if input == "" {
 		return nil, nil

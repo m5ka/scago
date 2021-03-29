@@ -14,7 +14,7 @@ type Change struct {
 // written in the scago sound change notation.
 // Returns nil if there is no change, or an error if the
 // change could not be parsed.
-func ParseChange(input string) (*Change, error) {
+func (s *ScagoInstance) ParseChange(input string) (*Change, error) {
 	input = strings.TrimSpace(input)
 	if input == "" {
 		return nil, nil
