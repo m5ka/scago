@@ -37,8 +37,7 @@ func (s *Scago) ParseTarget(input string) (*Target, error) {
 		// Append the category's pattern to the string if the
 		// target is a category identifier, otherwise just append
 		// the target.
-		c := s.GetCategory(target)
-		if c != nil {
+		if c := s.GetCategory(target); c != nil {
 			sb.WriteString(c.pattern)
 		} else {
 			sb.WriteString(target)

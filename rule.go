@@ -38,7 +38,11 @@ func (s *Scago) AddRule(rule string) error {
 	if err != nil {
 		return err
 	}
-	s.rules.Append(r)
+	if s.rules == nil {
+		s.rules = r
+	} else {
+		s.rules.Append(r)
+	}
 	return nil
 }
 

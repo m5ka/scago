@@ -34,20 +34,9 @@ func (c *Category) Append(category *Category) {
 // GetCategory returns the Category in s that corresponds to the
 // given identifier string, or nil if no such category exists.
 func (s *Scago) GetCategory(identifier string) *Category {
-	// Return nil in case of no categories at all
-	if s.categories == nil {
-		return nil
-	}
-	// Keep looping until we find the category we want
-	category := s.categories
-	for {
-		if category.identifier == identifier {
-			return category
-		}
-		if category.HasNext() {
-			category = category.next
-		} else {
-			break
+	for c := s.categories; c != nil; c = c.next {
+		if c.identifier == identifier {
+			return c
 		}
 	}
 	return nil
