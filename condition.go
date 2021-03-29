@@ -47,6 +47,9 @@ func (s *Scago) ExpandPatternToRegex(pattern string) (*regexp.Regexp, error) {
 			sb.WriteString(c)
 		}
 	}
+	if sb.Len() == 0 {
+		return nil, nil
+	}
 	if re, err := regexp.Compile(sb.String()); err != nil {
 		return nil, err
 	} else {

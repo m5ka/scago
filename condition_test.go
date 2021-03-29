@@ -1,19 +1,83 @@
 package scago
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestExpandPatternToRegex(t *testing.T) {
 	s := New()
 	err := s.AddCategory("K", []string{"a", "b", "c"})
 	if err != nil {
+		t.Fatalf("error when adding category")
+	}
+	t.Run(`s.ExpandPatternToRegex("xyKz")`, func(t *testing.T) {
+		assert := assert.New(t)
+		got, err := s.ExpandPatternToRegex("xyKz")
+		if !assert.NoError(err) {
+			return
+		}
+		assert.Equal(got.String(), "xy(a|b|c)z")
+	})
+}
+
+func TestParseCondition(t *testing.T) {
+	s := New()
+	err := s.AddCategory("K", []string{"a", "b", "c"})
+	if err != nil {
 		t.Errorf("error encountered when adding category")
 	}
-	testStr := "s.ExpandPatternToRegex('xyKz')"
-	got, err := s.ExpandPatternToRegex("xyKz")
-	want := "xy(a|b|c)z"
+	err = s.AddCategory("M", []string{"x", "y", "z"})
 	if err != nil {
-		t.Errorf("%s returned an error: %s", testStr, err)
-	} else if got.String() != want {
-		t.Errorf("%s = Regexp{%s}; want Regexp{%s}", testStr, got.String(), want)
+		t.Errorf("error encountered when adding category")
 	}
+	t.Run(`ParseCondition("K_M, _Mn,ab")`, func(t *testing.T) {
+		assert := assert.New(t)
+		got, err := s.ParseCondition("K_M, _Mn,ab")
+		if !assert.NoError(err) {
+			return
+		}
+		assert.False(got.global)
+		assert.Empty(got.pattern)
+		assert.Equal(got.pre.String(), "(a|b|c)")
+		assert.Equal(got.post.String(), "(x|y|z)")
+		if !assert.NotNil(got.next) {
+			return
+		}
+		got = got.next
+		assert.False(got.global)
+		assert.Empty(got.pattern)
+		assert.Nil(got.pre)
+		assert.Equal(got.post.String(), "(x|y|z)n")
+		if !assert.NotNil(got.next) {
+			return
+		}
+		got = got.next
+		assert.True(got.global)
+		assert.Nil(got.pre)
+		assert.Nil(got.post)
+		assert.Equal(got.pattern.String(), "ab")
+		assert.Nil(got.next)
+	})
+	t.Run(`ParseCondition(" MMaa,#p_t")`, func(t *testing.T) {
+		assert := assert.New(t)
+		got, err := s.ParseCondition(" MMaa,#p_t")
+		if !assert.NoError(err) {
+			return
+		}
+		assert.True(got.global)
+		assert.Nil(got.pre)
+		assert.Nil(got.post)
+		assert.Equal(got.pattern.String(), "(x|y|z)(x|y|z)aa")
+		if !assert.NotNil(got.next) {
+			return
+		}
+		got = got.next
+		assert.False(got.global)
+		assert.Nil(got.pattern)
+		assert.Equal(got.pre.String(), "#p")
+		assert.Equal(got.post.String(), "t")
+		assert.Nil(got.next)
+	})
 }
