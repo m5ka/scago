@@ -2,10 +2,10 @@ package scago
 
 import "regexp"
 
-// The Rule object represents a sound change rule that can target
-// a sound or set of sounds and imply a change under certain
-// circumstances. The object forms part of a linked list via the
-// next *Rule (which may be nil in case of being the last in the set).
+// Rule represents a sound change rule that can target a sound or set
+// of sounds and imply a change under certain circumstances.
+// The object forms part of a linked list via the next *Rule,
+// which may be nil in case of being the last in the set.
 type Rule struct {
 	target      *Target    // target of the sound change
 	change      *Change    // what's being changed to
@@ -16,13 +16,13 @@ type Rule struct {
 	next        *Rule      // the next rule in the linked list
 }
 
-// Returns whether a rule is followed by another,
-// i.e false if this is the last rule in the linked list.
+// HasNext returns true if the given rule is followed by another
+// and thus returns false if this is the last rule in the linked list.
 func (r *Rule) HasNext() bool {
 	return r.next != nil
 }
 
-// Appends a rule to the end of the linked list of rules.
+// Append appends a rule to the end of the linked list of rules.
 func (r *Rule) Append(rule *Rule) {
 	if r.HasNext() {
 		r.next.Append(rule)
@@ -31,24 +31,50 @@ func (r *Rule) Append(rule *Rule) {
 	r.next = rule
 }
 
-// Creates a new rule according to the given string and
+// AddRule creates a new rule according to the given string and
 // adds it to the rules of this ScagoInstance.
-func (s *ScagoInstance) AddRule(rule string) {
-	r := NewRule(rule)
+func (s *ScagoInstance) AddRule(rule string) error {
+	r, err := NewRule(rule)
+	if err != nil {
+		return err
+	}
 	s.rules.Append(r)
+	return nil
 }
 
-// Return a new Rule object according to the given rule string.
-func NewRule(rule string) *Rule {
+// NewRule returns a new Rule object according to the given rule string.
+// If the rule could not be parsed, it instead returns nil and an error.
+func NewRule(rule string) (*Rule, error) {
 	re := regexp.MustCompile(`^(.*?)>(.*?)(?:/(.*?)(?:!(.*?)(?:/(.*?))?)?)?$`)
 	parts := re.FindStringSubmatch(rule)
 
-	return &Rule{
-		ParseTarget(parts[1]),
-		ParseChange(parts[2]),
-		ParseCondition(parts[3]),
-		ParseCondition(parts[4]),
-		ParseChange(parts[5]),
-		1, nil, // TODO: parse for these values too
+	target, err := ParseTarget(parts[1])
+	if err != nil {
+		return nil, err
 	}
+	change, err := ParseChange(parts[2])
+	if err != nil {
+		return nil, err
+	}
+	condition, err := ParseCondition(parts[3])
+	if err != nil {
+		return nil, err
+	}
+	exception, err := ParseCondition(parts[4])
+	if err != nil {
+		return nil, err
+	}
+	alternative, err := ParseChange(parts[5])
+	if err != nil {
+		return nil, err
+	}
+
+	return &Rule{
+		target,
+		change,
+		condition,
+		exception,
+		alternative,
+		1, nil, // TODO: parse for these values too
+	}, nil
 }
