@@ -2,15 +2,18 @@ package scago
 
 import "regexp"
 
-// TODO: many of the Rule children want their own types?
+// The Rule object represents a sound change rule that can target
+// a sound or set of sounds and imply a change under certain
+// circumstances. The object forms part of a linked list via the
+// next *Rule (which may be nil in case of being the last in the set).
 type Rule struct {
-	target      *Target
-	change      *Change
-	condition   *Condition
-	exception   *Condition
-	alternative *Change
-	repetition  int
-	next        *Rule // the next rule in the linked list
+	target      *Target    // target of the sound change
+	change      *Change    // what's being changed to
+	condition   *Condition // condition for change to take place
+	exception   *Condition // exception to condition
+	alternative *Change    // alternative change in case of exception
+	repetition  int        // times to repeat change
+	next        *Rule      // the next rule in the linked list
 }
 
 // Returns whether a rule is followed by another,
