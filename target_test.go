@@ -9,8 +9,8 @@ func TestParseSimpleTarget(t *testing.T) {
 	want := "^(a)"
 	if err != nil {
 		t.Errorf("%s returned error: %s", testStr, err)
-	} else if got.pattern != want {
-		t.Errorf("%s = Target{%s}; want Target{%s}", testStr, got.pattern, want)
+	} else if got.pattern.String() != want {
+		t.Errorf("%s = Target{%s}; want Target{%s}", testStr, got.pattern.String(), want)
 	}
 }
 
@@ -21,8 +21,8 @@ func TestParseMultipleSimpleTargets(t *testing.T) {
 	want := "^(a|b|c)"
 	if err != nil {
 		t.Errorf("%s returned an error: %s", testStr, err)
-	} else if got.pattern != want {
-		t.Errorf("%s = Target{%s}; want Target{%s}", testStr, got.pattern, want)
+	} else if got.pattern.String() != want {
+		t.Errorf("%s = Target{%s}; want Target{%s}", testStr, got.pattern.String(), want)
 	}
 }
 
@@ -37,8 +37,8 @@ func TestParseCategoryTarget(t *testing.T) {
 	want := "^((a|b|c))"
 	if err != nil {
 		t.Errorf("%s returned an error: %s", testStr, err)
-	} else if got.pattern != want {
-		t.Errorf("%s = Target{%s}; want Target{%s}", testStr, got.pattern, want)
+	} else if got.pattern.String() != want {
+		t.Errorf("%s = Target{%s}; want Target{%s}", testStr, got.pattern.String(), want)
 	}
 }
 
@@ -57,8 +57,8 @@ func TestParseMultipleCategoryTargets(t *testing.T) {
 	want := "^((x|y|z)|(a|b|c))"
 	if err != nil {
 		t.Errorf("%s returned an error: %s", testStr, err)
-	} else if got.pattern != want {
-		t.Errorf("%s = Target{%s}; want Target{%s}", testStr, got.pattern, want)
+	} else if got.pattern.String() != want {
+		t.Errorf("%s = Target{%s}; want Target{%s}", testStr, got.pattern.String(), want)
 	}
 }
 
@@ -77,7 +77,7 @@ func TestParseMultipleMixedTargets(t *testing.T) {
 	want := "^((a|b|c)|a|b|c|d|(x|y|z)|e)"
 	if err != nil {
 		t.Errorf("%s returned an error: %s", testStr, err)
-	} else if got.pattern != want {
-		t.Errorf("%s = Target{%s}; want Target{%s}", testStr, got.pattern, want)
+	} else if got.pattern.String() != want {
+		t.Errorf("%s = Target{%s}; want Target{%s}", testStr, got.pattern.String(), want)
 	}
 }

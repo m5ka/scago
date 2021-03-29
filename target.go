@@ -10,7 +10,7 @@ import (
 // targeted by a sound change.
 // TODO: add more features to target e.g indexing (nth instance of target)
 type Target struct {
-	pattern string // the pattern represented by the target (regexp)
+	pattern *regexp.Regexp // the pattern represented by the target
 }
 
 // ParseTarget returns a Target object based on a given input
@@ -47,9 +47,9 @@ func (s *ScagoInstance) ParseTarget(input string) (*Target, error) {
 	sb.WriteString(")")
 	// Check the pattern compiles and return it as a Target if so
 	pattern := sb.String()
-	_, err := regexp.Compile(pattern)
+	re, err := regexp.Compile(pattern)
 	if err != nil {
 		return nil, err
 	}
-	return &Target{pattern}, nil
+	return &Target{re}, nil
 }
