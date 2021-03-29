@@ -62,7 +62,11 @@ func (s *ScagoInstance) AddCategory(identifier string, sounds []string) error {
 	if err != nil {
 		return err
 	}
-	s.categories.Append(category)
+	if s.categories == nil {
+		s.categories = category
+	} else {
+		s.categories.Append(category)
+	}
 	return nil
 }
 

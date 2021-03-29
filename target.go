@@ -1,13 +1,16 @@
 package scago
 
-import "strings"
+import (
+	"regexp"
+	"strings"
+)
 
 // Target represents the target of a sound change, that is
 // the sounds or broad categories of sounds that are to be
 // targeted by a sound change.
+// TODO: add more features to target e.g indexing (nth instance of target)
 type Target struct {
-	pattern string //lint:ignore U1000 not implemented yet
-	index   int    //lint:ignore U1000 not implemented yet
+	pattern string // the pattern represented by the target (regexp)
 }
 
 // ParseTarget returns a Target object based on a given input
@@ -23,11 +26,30 @@ func (s *ScagoInstance) ParseTarget(input string) (*Target, error) {
 		return nil, nil
 	}
 
-	//sb := &strings.Builder{}
-	//targets := strings.Split(input, ",")
-	//for _, target := range targets {
-	//}
-
-	// TODO: parse target instead of blank-returning nil always
-	return nil, nil
+	sb := &strings.Builder{}
+	targets := strings.Split(input, ",")
+	sb.WriteString("(")
+	for i, target := range targets {
+		if i != 0 {
+			sb.WriteString("|")
+		}
+		target = strings.TrimSpace(target)
+		// Append the category's pattern to the string if the
+		// target is a category identifier, otherwise just append
+		// the target.
+		c := s.GetCategory(target)
+		if c != nil {
+			sb.WriteString(c.pattern)
+		} else {
+			sb.WriteString(target)
+		}
+	}
+	sb.WriteString(")")
+	// Check the pattern compiles and return it as a Target if so
+	pattern := sb.String()
+	_, err := regexp.Compile(pattern)
+	if err != nil {
+		return nil, err
+	}
+	return &Target{pattern}, nil
 }
