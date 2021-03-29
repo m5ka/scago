@@ -31,10 +31,9 @@ func (c *Category) Append(category *Category) {
 	c.next = category
 }
 
-// GetCategory returns a Category that belongs to s ScagoInstance,
-// and corresponds to the given category string, or nil if no such
-// category exists.
-func (s *ScagoInstance) GetCategory(identifier string) *Category {
+// GetCategory returns the Category in s that corresponds to the
+// given identifier string, or nil if no such category exists.
+func (s *Scago) GetCategory(identifier string) *Category {
 	// Return nil in case of no categories at all
 	if s.categories == nil {
 		return nil
@@ -57,7 +56,7 @@ func (s *ScagoInstance) GetCategory(identifier string) *Category {
 // AddCategory creates a new category with the given identifier and sounds and
 // adds it to s.
 // Returns an error if an error was encountered.
-func (s *ScagoInstance) AddCategory(identifier string, sounds []string) error {
+func (s *Scago) AddCategory(identifier string, sounds []string) error {
 	category, err := NewCategory(identifier, sounds)
 	if err != nil {
 		return err

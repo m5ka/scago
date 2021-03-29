@@ -32,8 +32,8 @@ func (r *Rule) Append(rule *Rule) {
 }
 
 // AddRule creates a new rule according to the given string and
-// adds it to the rules of this ScagoInstance.
-func (s *ScagoInstance) AddRule(rule string) error {
+// adds it to the rules list in s.
+func (s *Scago) AddRule(rule string) error {
 	r, err := s.NewRule(rule)
 	if err != nil {
 		return err
@@ -44,7 +44,7 @@ func (s *ScagoInstance) AddRule(rule string) error {
 
 // NewRule returns a new Rule object according to the given rule string.
 // If the rule could not be parsed, it instead returns nil and an error.
-func (s *ScagoInstance) NewRule(rule string) (*Rule, error) {
+func (s *Scago) NewRule(rule string) (*Rule, error) {
 	re := regexp.MustCompile(`^(.*?)>(.*?)(?:/(.*?)(?:!(.*?)(?:/(.*?))?)?)?$`)
 	parts := re.FindStringSubmatch(rule)
 

@@ -18,7 +18,7 @@ type Target struct {
 // written in the scago sound change notation.
 // Returns nil if there is no target or returns an error if
 // the target could not be parsed.
-func (s *ScagoInstance) ParseTarget(input string) (*Target, error) {
+func (s *Scago) ParseTarget(input string) (*Target, error) {
 	// Trim spaces from the input string and return
 	// nil if there is no target to parse
 	input = strings.TrimSpace(input)
