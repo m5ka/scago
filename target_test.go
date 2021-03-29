@@ -6,7 +6,7 @@ func TestParseSimpleTarget(t *testing.T) {
 	s := New()
 	testStr := "s.ParseTarget('a ')"
 	got, err := s.ParseTarget("a ")
-	want := "(a)"
+	want := "^(a)"
 	if err != nil {
 		t.Errorf("%s returned error: %s", testStr, err)
 	} else if got.pattern != want {
@@ -18,7 +18,7 @@ func TestParseMultipleSimpleTargets(t *testing.T) {
 	s := New()
 	testStr := "s.ParseTarget('a , b,c ')"
 	got, err := s.ParseTarget("a , b,c ")
-	want := "(a|b|c)"
+	want := "^(a|b|c)"
 	if err != nil {
 		t.Errorf("%s returned an error: %s", testStr, err)
 	} else if got.pattern != want {
@@ -34,7 +34,7 @@ func TestParseCategoryTarget(t *testing.T) {
 	}
 	testStr := "(K = a|b|c) s.ParseTarget('K')"
 	got, err := s.ParseTarget("K")
-	want := "((a|b|c))"
+	want := "^((a|b|c))"
 	if err != nil {
 		t.Errorf("%s returned an error: %s", testStr, err)
 	} else if got.pattern != want {
@@ -54,7 +54,7 @@ func TestParseMultipleCategoryTargets(t *testing.T) {
 	}
 	testStr := "(K = a|b|c; M = x|y|z) s.ParseTarget('M, K')"
 	got, err := s.ParseTarget("M, K")
-	want := "((x|y|z)|(a|b|c))"
+	want := "^((x|y|z)|(a|b|c))"
 	if err != nil {
 		t.Errorf("%s returned an error: %s", testStr, err)
 	} else if got.pattern != want {
@@ -74,7 +74,7 @@ func TestParseMultipleMixedTargets(t *testing.T) {
 	}
 	testStr := "(K = a|b|c; M = x|y|z) s.ParseTarget(' K, a , b,c,d,M, e')"
 	got, err := s.ParseTarget(" K, a , b,c,d,M, e")
-	want := "((a|b|c)|a|b|c|d|(x|y|z)|e)"
+	want := "^((a|b|c)|a|b|c|d|(x|y|z)|e)"
 	if err != nil {
 		t.Errorf("%s returned an error: %s", testStr, err)
 	} else if got.pattern != want {

@@ -28,7 +28,7 @@ func (s *ScagoInstance) ParseTarget(input string) (*Target, error) {
 
 	sb := &strings.Builder{}
 	targets := strings.Split(input, ",")
-	sb.WriteString("(")
+	sb.WriteString("^(")
 	for i, target := range targets {
 		if i != 0 {
 			sb.WriteString("|")
