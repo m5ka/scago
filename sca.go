@@ -1,7 +1,5 @@
 package scago
 
-import "errors"
-
 // Scago is the base object that contains enough information to
 // allow sound changes to be performed on words. It contains
 // rules to be applied and the categories that are used in the
@@ -16,7 +14,14 @@ type Scago struct {
 // returned, the returned string may be empty.
 // TODO: implement this functionally
 func (s *Scago) Apply(lemma string) (string, error) {
-	return "", errors.New("function not yet implemented")
+	var err error
+	for r := s.rules; r != nil; r = r.next {
+		lemma, err = r.Apply(lemma)
+		if err != nil {
+			return "", err
+		}
+	}
+	return lemma, nil
 }
 
 // New returns a new blank instance of Scago.

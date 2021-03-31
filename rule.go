@@ -16,6 +16,13 @@ type Rule struct {
 	next        *Rule      // the next rule in the linked list
 }
 
+// Apply applies this rule to the given word and returns the
+// resulting word. In case of errors, these are returned
+// alongside an empty result.
+func (r *Rule) Apply(lemma string) (string, error) {
+	return lemma, nil
+}
+
 // HasNext returns true if the given rule is followed by another
 // and thus returns false if this is the last rule in the linked list.
 func (r *Rule) HasNext() bool {
