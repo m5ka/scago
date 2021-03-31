@@ -1,6 +1,9 @@
 package scago
 
-import "regexp"
+import (
+	"errors"
+	"regexp"
+)
 
 // Rule represents a sound change rule that can target a sound or set
 // of sounds and imply a change under certain circumstances.
@@ -58,6 +61,9 @@ func (s *Scago) AddRule(rule string) error {
 func (s *Scago) NewRule(rule string) (*Rule, error) {
 	re := regexp.MustCompile(`^(.*?)>(.*?)(?:/(.*?)(?:!(.*?)(?:/(.*?))?)?)?$`)
 	parts := re.FindStringSubmatch(rule)
+	if parts == nil {
+		return nil, errors.New("rule does not parse")
+	}
 
 	target, err := s.ParseTarget(parts[1])
 	if err != nil {

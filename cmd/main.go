@@ -23,7 +23,11 @@ func main() {
 		return
 	} else*/
 	if *ruleLiteral != "" {
-		s.AddRule(*ruleLiteral)
+		err := s.AddRule(*ruleLiteral)
+		if err != nil {
+			fmt.Println("Error adding rule:", err)
+			return
+		}
 	} else {
 		fmt.Println("No rule(s) specified.")
 		return
@@ -37,9 +41,9 @@ func main() {
 	output, err := s.Apply(inputLiteral)
 	//}
 
-	if err != nil {
+	if err == nil {
 		fmt.Println(output)
 	} else {
-		fmt.Println("Something went wrong!", err)
+		fmt.Println("Something went wrong:", err)
 	}
 }
