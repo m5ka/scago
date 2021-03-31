@@ -14,14 +14,15 @@ func main() {
 	ruleLiteral := flag.String("r", "", "a single rule to apply to the word(s)")
 	flag.Parse()
 	inputLiteral := flag.Arg(0)
+	if inputLiteral == "" {
+		fmt.Println("No word(s) specified.")
+		return
+	}
 
 	s := scago.New()
 
 	// TODO: allow reading of ruleset file for adding rules to ScagoInstance
-	/*if *rulesetFile != "" {
-		fmt.Println("[DEBUG] This feature hasn't been added yet. Sorry!")
-		return
-	} else*/
+
 	if *ruleLiteral != "" {
 		err := s.AddRule(*ruleLiteral)
 		if err != nil {
@@ -34,13 +35,8 @@ func main() {
 	}
 
 	// TODO: allow reading of input file for processing words to Apply
-	/*if *inputFile != "" {
-		fmt.Println("[DEBUG] This feature hasn't been added yet. Sorry!")
-		return
-	} else if inputLiteral != "" {*/
-	output, err := s.Apply(inputLiteral)
-	//}
 
+	output, err := s.Apply(inputLiteral)
 	if err == nil {
 		fmt.Println(output)
 	} else {
