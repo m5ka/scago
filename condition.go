@@ -32,10 +32,13 @@ func (c *Condition) Append(condition *Condition) {
 	}
 }
 
-func (s *Scago) ExpandPatternToRegex(pattern string) (*regexp.Regexp, error) {
+func (s *Scago) ExpandPatternToRegex(pattern string, initial bool, final bool) (*regexp.Regexp, error) {
 	pattern = strings.TrimSpace(pattern)
 	chars := strings.Split(pattern, "")
 	sb := &strings.Builder{}
+	if initial {
+		sb.WriteString("^")
+	}
 	for _, c := range chars {
 		c = strings.TrimSpace(c)
 		if c == "" {
@@ -47,7 +50,10 @@ func (s *Scago) ExpandPatternToRegex(pattern string) (*regexp.Regexp, error) {
 			sb.WriteString(c)
 		}
 	}
-	if sb.Len() == 0 {
+	if final {
+		sb.WriteString("$")
+	}
+	if sb.Len() == 0 || sb.String() == "^" || sb.String() == "$" {
 		return nil, nil
 	}
 	if re, err := regexp.Compile(sb.String()); err != nil {
@@ -83,19 +89,19 @@ func (s *Scago) ParseCondition(input string) (*Condition, error) {
 		condSplit := strings.Split(cond, "_")
 		if len(condSplit) == 1 {
 			c.global = true
-			pattern, err := s.ExpandPatternToRegex(cond)
+			pattern, err := s.ExpandPatternToRegex(cond, false, false)
 			if err != nil {
 				return nil, err
 			}
 			c.pattern = pattern
 		} else if len(condSplit) == 2 {
 			c.global = false
-			re, err := s.ExpandPatternToRegex(condSplit[0])
+			re, err := s.ExpandPatternToRegex(condSplit[0], false, true)
 			if err != nil {
 				return nil, err
 			}
 			c.pre = re
-			re, err = s.ExpandPatternToRegex(condSplit[1])
+			re, err = s.ExpandPatternToRegex(condSplit[1], true, false)
 			if err != nil {
 				return nil, err
 			}

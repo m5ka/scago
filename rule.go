@@ -20,10 +20,49 @@ type Rule struct {
 }
 
 // Apply applies this rule to the given word and returns the
-// resulting word. In case of errors, these are returned
+// resulting word. In case of an error, this is returned
 // alongside an empty result.
 func (r *Rule) Apply(lemma string) (string, error) {
-	return lemma, nil
+	w, err := NewWord(lemma)
+	if err != nil {
+		return "", err
+	}
+	for w.Next() {
+		// Make sure the target matches (or no target) and take note
+		// of target length if so, or skip if not.
+		var t int
+		if r.target != nil {
+			t = w.MatchTarget(r.target.pattern)
+			if t < 0 {
+				continue
+			}
+		}
+		// Check conditions and skip if any do not match
+		if !w.CheckConditions(r.condition, t) {
+			continue
+		}
+		// Based on exception/alternative, decide whether to change
+		// to change or exception, or whether we need to skip (exception
+		// with no alternative provided)
+		change := r.change
+		if r.exception != nil {
+			if w.CheckConditions(r.exception, t) {
+				if r.alternative != nil {
+					change = r.alternative
+				}
+			} else {
+				continue
+			}
+		}
+		// Time to carry out the change!
+		// change = (*Change) change to carry out
+		// t      = (int) length in word to alter/move/etc
+		err := w.Change(change, t)
+		if err != nil {
+			return "", err
+		}
+	}
+	return w.String(), nil
 }
 
 // HasNext returns true if the given rule is followed by another

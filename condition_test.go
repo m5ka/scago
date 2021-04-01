@@ -12,13 +12,37 @@ func TestExpandPatternToRegex(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error when adding category")
 	}
-	t.Run(`s.ExpandPatternToRegex("xyKz")`, func(t *testing.T) {
+	t.Run("Expand xyKz non-initial non-final", func(t *testing.T) {
 		assert := assert.New(t)
-		got, err := s.ExpandPatternToRegex("xyKz")
+		got, err := s.ExpandPatternToRegex("xyKz", false, false)
 		if !assert.NoError(err) {
 			return
 		}
 		assert.Equal(got.String(), "xy(a|b|c)z")
+	})
+	t.Run("Expand xyKz initial non-final", func(t *testing.T) {
+		assert := assert.New(t)
+		got, err := s.ExpandPatternToRegex("xyKz", true, false)
+		if !assert.NoError(err) {
+			return
+		}
+		assert.Equal(got.String(), "^xy(a|b|c)z")
+	})
+	t.Run("Expand xyKz non-initial final", func(t *testing.T) {
+		assert := assert.New(t)
+		got, err := s.ExpandPatternToRegex("xyKz", false, true)
+		if !assert.NoError(err) {
+			return
+		}
+		assert.Equal(got.String(), "xy(a|b|c)z$")
+	})
+	t.Run("Expand xyKz initial final", func(t *testing.T) {
+		assert := assert.New(t)
+		got, err := s.ExpandPatternToRegex("xyKz", true, true)
+		if !assert.NoError(err) {
+			return
+		}
+		assert.Equal(got.String(), "^xy(a|b|c)z$")
 	})
 }
 
@@ -40,8 +64,8 @@ func TestParseCondition(t *testing.T) {
 		}
 		assert.False(got.global)
 		assert.Empty(got.pattern)
-		assert.Equal(got.pre.String(), "(a|b|c)")
-		assert.Equal(got.post.String(), "(x|y|z)")
+		assert.Equal(got.pre.String(), "(a|b|c)$")
+		assert.Equal(got.post.String(), "^(x|y|z)")
 		if !assert.NotNil(got.next) {
 			return
 		}
@@ -49,7 +73,7 @@ func TestParseCondition(t *testing.T) {
 		assert.False(got.global)
 		assert.Empty(got.pattern)
 		assert.Nil(got.pre)
-		assert.Equal(got.post.String(), "(x|y|z)n")
+		assert.Equal(got.post.String(), "^(x|y|z)n")
 		if !assert.NotNil(got.next) {
 			return
 		}
@@ -76,8 +100,8 @@ func TestParseCondition(t *testing.T) {
 		got = got.next
 		assert.False(got.global)
 		assert.Nil(got.pattern)
-		assert.Equal(got.pre.String(), "#p")
-		assert.Equal(got.post.String(), "t")
+		assert.Equal(got.pre.String(), "#p$")
+		assert.Equal(got.post.String(), "^t")
 		assert.Nil(got.next)
 	})
 }
