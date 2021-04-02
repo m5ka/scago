@@ -5,13 +5,15 @@ The library is inspired by KathTheDragon's SCE, a similar tool implemented in Py
 
 ## Usage
 ### Standalone
+Make sure that you have the binary folder of your gopath in your shell path (usually $HOME/go/bin; or $GOPATH/bin if your gopath differs from default)
 ```
-go run github.com/zeeonbees/scago/cmd -r "a > e / #_" abacus
+go install github.com/myriolang/scago/cmd/scago@latest
+scago -r "a > e / #_" abacus
 ```
 
 ### Library
 ```go
-import scago "github.com/zeeonbees/scago"
+import scago "github.com/myriolang/scago"
 
 func main() {
     s := scago.New()
