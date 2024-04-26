@@ -3,8 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-
-	scago "github.com/myriolang/scago"
+	"go.m5ka.dev/scago"
 )
 
 func main() {

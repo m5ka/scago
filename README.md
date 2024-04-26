@@ -1,19 +1,27 @@
-# scago
+# scago ⛵️
+
+![Release Workflow Status](https://img.shields.io/github/actions/workflow/status/m5ka/scago/release.yaml)
+
 scago (or **s**ound **c**hange **a**pplier go) is a go library that can apply a sound change ruleset to a word. It's a useful tool in conlanging communities for artificially creating diachronic change in a constructed language.
 
-The library is inspired by KathTheDragon's SCE, a similar tool implemented in Python.
+The library is inspired by KathTheDragon's [SCE](https://github.com/KathTheDragon/SCE), a similar tool implemented in Python.
 
 ## Usage
 ### Standalone
 Make sure that you have the binary folder of your gopath in your shell path (usually $HOME/go/bin; or $GOPATH/bin if your gopath differs from default)
 ```
-go install github.com/m5ka/scago/cmd/scago@latest
+go install go.m5ka.dev/scago/cmd/scago@latest
 scago -r "a > e / #_" abacus
 ```
 
 ### Library
 ```go
-import scago "github.com/m5ka/scago"
+package main
+
+import (
+	"fmt"
+	"go.m5ka.dev/scago"
+)
 
 func main() {
     s := scago.New()
